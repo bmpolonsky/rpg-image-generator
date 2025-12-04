@@ -5,7 +5,6 @@ import { TRANSLATIONS } from "../translations";
 class AudioController {
   private recognition: SpeechRecognition | null = null;
   private baseText: string = "";
-  private finalTranscript: string = "";
 
   toggleListening() {
     const state = appStore.getState();
@@ -28,53 +27,61 @@ class AudioController {
 
     const state = appStore.getState();
     appStore.update(s => ({ ...s, isListening: true, error: null }));
-    
+
     // Capture the text state at the moment of starting
     this.baseText = state.locationRequest;
-    this.finalTranscript = "";
-    
+    let finalTranscript = ""; // reset
+
     const SpeechRecognition = window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     this.recognition = recognition;
-    
-    // Keep continuous: true for speed and UX
-    recognition.continuous = true; 
+
+    recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = state.language === 'ru' ? 'ru-RU' : 'en-US';
+    recognition.lang = state.language === "ru" ? "ru-RU" : "en-US";
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
         let interimTranscript = "";
 
-        // Fix for mobile duplication: 
-        // Use event.resultIndex to iterate ONLY over new/changed results.
-        // This prevents re-appending history that mobile browsers might keep in the array.
         for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-                this.finalTranscript += event.results[i][0].transcript;
+            const res = event.results[i];
+            const alt = res[0];
+            const text = alt.transcript;
+            const confidence = alt.confidence;
+
+            // Mobile bug workaround: 
+            // On some Android devices, the engine returns the whole history as 'isFinal' chunks 
+            // but with confidence 0. Real final results usually have confidence > 0.
+            if (res.isFinal && confidence > 0) {
+                // final chunk -> add to stable text
+                finalTranscript += text;
             } else {
-                interimTranscript += event.results[i][0].transcript;
+                // still “live” text -> only interim
+                interimTranscript += text;
             }
         }
 
-        appStore.update(s => ({ 
-            ...s, 
-            locationRequest: this.baseText + this.finalTranscript + interimTranscript 
+        appStore.update(s => ({
+            ...s,
+            locationRequest: this.baseText + finalTranscript + interimTranscript + ' ',
         }));
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error", event.error);
-        if (event.error === 'not-allowed') {
-             appStore.update(s => ({ ...s, isListening: false, error: TRANSLATIONS[s.language].errMicrophone }));
-             this.recognition = null;
+        if (event.error === "not-allowed") {
+            appStore.update(s => ({
+                ...s,
+                isListening: false,
+                error: TRANSLATIONS[s.language].errMicrophone,
+            }));
+            this.recognition = null;
         } else {
-             // For other errors, just stop to reset state
-             this.stop();
+            this.stop();
         }
     };
 
     recognition.onend = () => {
-        // Stop UI state if it ends naturally (e.g. silence or user stop)
         if (this.recognition) {
             this.stop();
         }
