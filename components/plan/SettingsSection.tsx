@@ -16,7 +16,8 @@ const SettingsSection: React.FC = () => {
         if (newVal === 'gemini-3-pro-image-preview') {
             if (window.aistudio && window.aistudio.openSelectKey) {
                 try {
-                    // Check if key exists, if not open dialog
+                    // Force open key selector if we can't verify a key is selected
+                    // The API doesn't always strictly return true/false synchronously so we rely on user action
                     const hasKey = window.aistudio.hasSelectedApiKey 
                         ? await window.aistudio.hasSelectedApiKey() 
                         : false;

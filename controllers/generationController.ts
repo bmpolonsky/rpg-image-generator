@@ -1,4 +1,5 @@
 
+
 import { appStore } from "../state/appStore";
 import { canvasStore } from "../state/canvasStore";
 import { AIController } from "./aiController";
@@ -46,7 +47,7 @@ class GenerationController {
               if (!hasKey) {
                   if (window.aistudio.openSelectKey) {
                       try {
-                        const success = await window.aistudio.openSelectKey();
+                        await window.aistudio.openSelectKey();
                         return true; // Assume success to handle race condition
                       } catch (e) {
                           console.error("Key selection failed", e);

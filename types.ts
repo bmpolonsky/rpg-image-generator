@@ -1,4 +1,5 @@
 
+
 export interface LoreFile {
   name: string;
   content: string;
@@ -62,8 +63,14 @@ export interface MapData {
 }
 
 declare global {
+    interface AIStudio {
+        hasSelectedApiKey: () => Promise<boolean>;
+        openSelectKey: () => Promise<void>; 
+    }
+
     interface SpeechRecognitionEvent extends Event {
         results: SpeechRecognitionResultList;
+        resultIndex: number;
     }
 
     interface SpeechRecognitionErrorEvent extends Event {
@@ -86,5 +93,6 @@ declare global {
         webkitSpeechRecognition: {
             new(): SpeechRecognition;
         };
+        aistudio?: AIStudio;
     }
 }

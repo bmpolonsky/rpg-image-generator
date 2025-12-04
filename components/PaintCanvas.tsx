@@ -281,6 +281,7 @@ const PaintCanvas: React.FC = () => {
                 onPointerMove={draw}
                 onPointerUp={stopDrawing}
                 onPointerCancel={stopDrawing}
+                onPointerLeave={stopDrawing}
             />
         </div>
       </div>
