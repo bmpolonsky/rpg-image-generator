@@ -1,0 +1,7 @@
+{
+  "name": "RPG Image Generator",
+  "description": "",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
