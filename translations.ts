@@ -37,17 +37,28 @@ export const TRANSLATIONS = {
     },
     
     sketchHelpers: {
-        battlemap: "Draw walls, obstacles, and terrain boundaries.",
-        location: "Draw the horizon, main structures, and foreground elements.",
-        character: "Draw a stick figure pose, silhouette, or equipment outlines."
+      battlemap: "Draw walls, obstacles, and terrain boundaries.",
+      location: "Draw the horizon, main structures, and foreground elements.",
+      character: "Draw a stick figure pose, silhouette, or equipment outlines."
     },
     
     styles: {
-        realistic: "Realistic",
-        oldschool: "Old School",
-        grimdark: "Grimdark",
-        blueprint: "Blueprint",
-        watercolor: "Watercolor"
+      modern: "Modern",
+      realistic: "Realistic",
+      anime: "Anime",
+      comic: "Comic",
+      pixelart: "Pixel Art",
+      watercolor: "Watercolor",
+      oilpainting: "Oil",
+      oldschool: "Old School",
+      grimdark: "Grimdark",
+      gothic: "Gothic",
+      cyberpunk: "Cyberpunk",
+      sketch: "Sketch",
+      isometric: "Isometric",
+      blueprint: "Blueprint",
+      noir: "Noir",
+      claymation: "Clay"
     },
     
     modelDirect: "Raw Input / Skip AI",
@@ -130,17 +141,28 @@ export const TRANSLATIONS = {
     },
 
     sketchHelpers: {
-        battlemap: "Нарисуйте стены, препятствия и границы местности.",
-        location: "Нарисуйте горизонт, основные строения и передний план.",
-        character: "Нарисуйте позу (человечка), силуэт или контуры снаряжения."
+      battlemap: "Нарисуйте стены, препятствия и границы местности.",
+      location: "Нарисуйте горизонт, основные строения и передний план.",
+      character: "Нарисуйте позу (человечка), силуэт или контуры снаряжения."
     },
     
     styles: {
-        realistic: "Реализм",
-        oldschool: "Старая школа",
-        grimdark: "Гримдарк",
-        blueprint: "Чертеж",
-        watercolor: "Акварель"
+      modern: "Модерн",
+      realistic: "Реализм",
+      anime: "Аниме",
+      comic: "Комикс",
+      pixelart: "Пиксель-арт",
+      watercolor: "Акварель",
+      oilpainting: "Масло",
+      oldschool: "Олдскул",
+      grimdark: "Гримдарк",
+      gothic: "Готика",
+      cyberpunk: "Киберпанк",
+      sketch: "Карандаш",
+      isometric: "Изометрия",
+      blueprint: "Чертёж",
+      noir: "Нуар",
+      claymation: "Пластилин"
     },
 
     modelDirect: "Без обработки (сырой ввод)",

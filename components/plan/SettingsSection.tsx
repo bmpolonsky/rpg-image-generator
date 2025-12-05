@@ -75,11 +75,22 @@ const SettingsSection: React.FC = () => {
                     onChange={(e) => appStore.update(s => ({...s, artStyle: e.target.value}))}
                     className="bg-gray-800 text-xs text-gray-300 border border-gray-600 rounded px-2 py-1 outline-none focus:border-amber-450 cursor-pointer w-40"
                 >
+                        <option value="modern">{t.styles.modern}</option>
                         <option value="realistic">{t.styles.realistic}</option>
+                        <option value="anime">{t.styles.anime}</option>
+                        <option value="comic">{t.styles.comic}</option>
+                        <option value="pixelart">{t.styles.pixelart}</option>
+                        <option value="watercolor">{t.styles.watercolor}</option>
+                        <option value="oilpainting">{t.styles.oilpainting}</option>
                         <option value="oldschool">{t.styles.oldschool}</option>
                         <option value="grimdark">{t.styles.grimdark}</option>
+                        <option value="gothic">{t.styles.gothic}</option>
+                        <option value="cyberpunk">{t.styles.cyberpunk}</option>
+                        <option value="sketch">{t.styles.sketch}</option>
+                        <option value="isometric">{t.styles.isometric}</option>
                         <option value="blueprint">{t.styles.blueprint}</option>
-                        <option value="watercolor">{t.styles.watercolor}</option>
+                        <option value="noir">{t.styles.noir}</option>
+                        <option value="claymation">{t.styles.claymation}</option>
                 </select>
             </div>
 

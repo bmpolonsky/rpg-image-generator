@@ -1,5 +1,3 @@
-
-
 import { appStore } from "../state/appStore";
 import { canvasStore } from "../state/canvasStore";
 import { AIController } from "./aiController";
@@ -9,6 +7,7 @@ import { TRANSLATIONS } from "../translations";
 class GenerationController {
   private abortController: AbortController | null = null;
   private timerInterval: number | null = null;
+  private startTime: number = 0;
 
   constructor() {
      appStore.subscribe(state => {
@@ -22,8 +21,10 @@ class GenerationController {
   }
 
   private startTimer() {
+      this.startTime = Date.now();
       this.timerInterval = window.setInterval(() => {
-          appStore.update(s => ({ ...s, genTimer: s.genTimer + 0.1 }));
+          const elapsed = (Date.now() - this.startTime) / 1000;
+          appStore.update(s => ({ ...s, genTimer: elapsed }));
       }, 100);
   }
 
