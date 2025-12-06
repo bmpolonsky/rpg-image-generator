@@ -1,17 +1,23 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Tool } from '../types';
-import { Eraser, Pencil, Trash2, Undo, Redo, Square, Circle, Minus, Grid3X3 } from 'lucide-react';
+import { Eraser, Pencil, Trash2, Undo, Redo, Square, Circle, Minus, Grid3X3, ImagePlus } from 'lucide-react';
 import { useStore } from '../lib/store';
 import { canvasStore, setTool, setColor, setLineWidth, pushHistory, undo, redo, clearCanvas, toggleGrid } from '../state/canvasStore';
+import { appStore } from '../state/appStore';
+import { TRANSLATIONS } from '../translations';
 
 const PaintCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { tool, lineWidth, color, history, historyStep, currentBase64, showGrid } = useStore(canvasStore);
+  const { language } = useStore(appStore);
   
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState<{x: number, y: number} | null>(null);
   const snapshotRef = useRef<ImageData | null>(null);
+
+  const t = TRANSLATIONS[language];
 
   // Keyboard Shortcuts
   useEffect(() => {
@@ -181,6 +187,44 @@ const PaintCanvas: React.FC = () => {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            // Fit image to canvas preserving aspect ratio
+            const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            const x = (canvas.width - w) / 2;
+            const y = (canvas.height - h) / 2;
+
+            // Draw black background first
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.drawImage(img, x, y, w, h);
+            
+            // Save to history
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            pushHistory(imageData, canvas.toDataURL('image/png'));
+        };
+        img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+    
+    // Reset input so same file can be selected again
+    e.target.value = '';
+  };
+
   return (
     <div className="flex flex-col gap-2 w-full h-full overflow-hidden">
       {/* Toolbar */}
@@ -253,6 +297,17 @@ const PaintCanvas: React.FC = () => {
         </div>
 
         <div className="h-6 w-px bg-gray-600 mx-1 flex-shrink-0"></div>
+
+        <button title={t.uploadReference} onClick={() => fileInputRef.current?.click()} className="p-2 rounded text-gray-300 hover:bg-gray-700 hover:text-white flex-shrink-0">
+          <ImagePlus size={18} />
+        </button>
+        <input 
+            ref={fileInputRef}
+            type="file" 
+            accept="image/*" 
+            className="hidden" 
+            onChange={handleImageUpload}
+        />
 
         <button onClick={() => clearCanvas(800, 800)} className="p-2 rounded text-red-400 hover:bg-red-900/30 hover:text-red-300 flex-shrink-0">
           <Trash2 size={18} />

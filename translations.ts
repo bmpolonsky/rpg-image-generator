@@ -93,6 +93,7 @@ export const TRANSLATIONS = {
     // Uploader
     uploadFolder: "Upload Folder",
     uploadFiles: "Upload Files",
+    uploadReference: "Upload Sketch/Reference",
     filesLoaded: "Files Loaded",
     clearAll: "Clear All",
 
@@ -197,6 +198,7 @@ export const TRANSLATIONS = {
     // Uploader
     uploadFolder: "Загрузить папку",
     uploadFiles: "Загрузить файлы",
+    uploadReference: "Загрузить скетч/референс",
     filesLoaded: "Файлов загружено",
     clearAll: "Очистить",
     
