@@ -97,12 +97,12 @@ const App: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
            {/* Project Actions */}
-           <div className="hidden lg:flex items-center gap-2">
-               <button onClick={() => projectController.exportProject()} className="flex items-center gap-1 text-xs text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-gray-800 transition-colors" title={t.exportProject}>
-                   <Download size={14} /> {t.exportProject}
+           <div className="flex items-center gap-1 lg:gap-2">
+               <button onClick={() => projectController.exportProject()} className="flex items-center gap-1 text-xs text-gray-400 hover:text-white px-1.5 lg:px-2 py-1 rounded hover:bg-gray-800 transition-colors" title={t.exportProject}>
+                   <Download size={14} /> <span className="hidden sm:inline">{t.exportProject}</span>
                </button>
-               <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 text-xs text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-gray-800 transition-colors" title={t.importProject}>
-                   <Upload size={14} /> {t.importProject}
+               <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 text-xs text-gray-400 hover:text-white px-1.5 lg:px-2 py-1 rounded hover:bg-gray-800 transition-colors" title={t.importProject}>
+                   <Upload size={14} /> <span className="hidden sm:inline">{t.importProject}</span>
                </button>
                <input type="file" ref={fileInputRef} onChange={handleImport} accept=".json" className="hidden" />
            </div>

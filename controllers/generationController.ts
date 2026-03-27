@@ -12,15 +12,16 @@ class GenerationController {
   constructor() {
      appStore.subscribe(state => {
          const isWorking = state.isGeneratingDescription || state.isGeneratingImage || state.isEditingImage || state.isGeneratingNarrative;
-         if (isWorking && !this.timerInterval) {
-             this.startTimer();
-         } else if (!isWorking && this.timerInterval) {
+         if (!isWorking && this.timerInterval) {
              this.stopTimer();
          }
      });
   }
 
   private startTimer() {
+      if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+      }
       this.startTime = Date.now();
       this.timerInterval = window.setInterval(() => {
           const elapsed = (Date.now() - this.startTime) / 1000;
@@ -42,7 +43,7 @@ class GenerationController {
   }
 
   private async ensureApiKey(model: string): Promise<boolean> {
-      if (model === 'gemini-3-pro-image-preview') {
+      if (model === 'gemini-3.1-flash-image-preview') {
           if (window.aistudio && window.aistudio.hasSelectedApiKey) {
               const hasKey = await window.aistudio.hasSelectedApiKey();
               if (!hasKey) {
@@ -73,7 +74,8 @@ class GenerationController {
           isGeneratingImage: false,
           isEditingImage: false,
           isGeneratingNarrative: false,
-          error: null
+          error: null,
+          genTimer: 0
       }));
   }
 
@@ -95,7 +97,8 @@ class GenerationController {
         isGeneratingDescription: false,
         isGeneratingImage: false,
         isEditingImage: false,
-        isGeneratingNarrative: false
+        isGeneratingNarrative: false,
+        genTimer: 0
     }));
   }
 
@@ -121,25 +124,32 @@ class GenerationController {
     appStore.update(s => ({ 
         ...s, 
         genTimer: 0,
+        lastTextDuration: undefined,
+        lastImageDuration: undefined,
         isGeneratingDescription: true, 
         isGeneratingNarrative: true, 
         error: null,
     }));
+    this.startTimer();
 
     const textStartTime = Date.now();
     let currentDescription = "";
     
     // Start narrative generation but don't await it yet for UI flow
-    const narrativePromise = AIController.generateNarrativeText(state.loreFiles, state.locationRequest, state.mode, state.language)
-        .then(text => {
-            if (signal.aborted) return "";
-            appStore.update(s => ({
-                ...s, 
-                narrativeDescription: text,
-                isGeneratingNarrative: false
-            }));
-            return text;
-        });
+    let narrativePromise = Promise.resolve("");
+    if (state.generateNarrative) {
+        appStore.update(s => ({ ...s, isGeneratingNarrative: true }));
+        narrativePromise = AIController.generateNarrativeText(state.loreFiles, state.locationRequest, state.mode, state.language)
+            .then(text => {
+                if (signal.aborted) return "";
+                appStore.update(s => ({
+                    ...s, 
+                    narrativeDescription: text,
+                    isGeneratingNarrative: false
+                }));
+                return text;
+            });
+    }
 
     try {
         // 2. Visual Description
@@ -169,6 +179,7 @@ class GenerationController {
 
         // 3. Images
         const imageStartTime = Date.now();
+        const errors: Error[] = [];
         const imgPromises = Array(state.imageCount).fill(null).map(async () => {
             if (signal.aborted) return;
             try {
@@ -197,13 +208,19 @@ class GenerationController {
                     generatedImages: [...s.generatedImages, newAsset],
                     selectedImageIndex: s.generatedImages.length // Select new
                 }));
-            } catch (e) {
+            } catch (e: any) {
                 console.error("Single image gen failed", e);
-                // Don't throw here to allow other images to finish
+                errors.push(e);
             }
         });
 
         await Promise.all(imgPromises);
+        
+        if (errors.length === state.imageCount && state.imageCount > 0) {
+            throw new Error(`Failed to generate images: ${errors[0].message}`);
+        } else if (errors.length > 0) {
+            appStore.update(s => ({ ...s, error: `Some images failed to generate: ${errors[0].message}` }));
+        }
         
         if (!signal.aborted) {
              appStore.update(s => ({
@@ -229,10 +246,12 @@ class GenerationController {
 
       const signal = this.initAbortController();
 
-      appStore.update(s => ({ ...s, genTimer: 0, isGeneratingImage: true, error: null }));
+      appStore.update(s => ({ ...s, genTimer: 0, lastImageDuration: undefined, isGeneratingImage: true, error: null }));
+      this.startTimer();
 
       try {
           const startTime = Date.now();
+          const errors: Error[] = [];
           const promises = Array(state.imageCount).fill(null).map(async () => {
               if (signal.aborted) return;
               try {
@@ -255,10 +274,19 @@ class GenerationController {
                       generatedImages: [...s.generatedImages, newAsset],
                       selectedImageIndex: s.generatedImages.length
                   }));
-              } catch (e) { console.error(e); }
+              } catch (e: any) { 
+                  console.error(e); 
+                  errors.push(e);
+              }
           });
 
           await Promise.all(promises);
+
+          if (errors.length === state.imageCount && state.imageCount > 0) {
+              throw new Error(`Failed to generate variations: ${errors[0].message}`);
+          } else if (errors.length > 0) {
+              appStore.update(s => ({ ...s, error: `Some variations failed to generate: ${errors[0].message}` }));
+          }
 
           if (!signal.aborted) {
               appStore.update(s => ({
@@ -280,7 +308,8 @@ class GenerationController {
       if (!(await this.ensureApiKey(state.imageModel))) return;
 
       const signal = this.initAbortController();
-      appStore.update(s => ({ ...s, genTimer: 0, isEditingImage: true, error: null }));
+      appStore.update(s => ({ ...s, genTimer: 0, lastImageDuration: undefined, isEditingImage: true, error: null }));
+      this.startTimer();
 
       try {
           const startTime = Date.now();

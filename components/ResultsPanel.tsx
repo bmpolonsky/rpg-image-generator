@@ -140,7 +140,6 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ onDeleteRequest, onDeleteAl
 
     const handleEditClick = () => {
         generationController.editImage(editPrompt);
-        setEditPrompt('');
     };
 
     const displayedNarrative = currentAsset?.narrative || narrativeDescription;

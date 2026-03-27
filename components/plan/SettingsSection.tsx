@@ -5,7 +5,7 @@ import { useStore } from '../../lib/store';
 import { TRANSLATIONS } from '../../translations';
 
 const SettingsSection: React.FC = () => {
-    const { descriptionModel, imageModel, artStyle, imageCount, language } = useStore(appStore);
+    const { descriptionModel, imageModel, artStyle, imageCount, language, generateNarrative } = useStore(appStore);
     const t = TRANSLATIONS[language];
 
     const handleImageModelChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -13,7 +13,7 @@ const SettingsSection: React.FC = () => {
         appStore.update(s => ({...s, imageModel: newVal}));
 
         // Check if Pro model and ensure key is selected immediately
-        if (newVal === 'gemini-3-pro-image-preview') {
+        if (newVal === 'gemini-3.1-flash-image-preview') {
             if (window.aistudio && window.aistudio.openSelectKey) {
                 try {
                     // Force open key selector if we can't verify a key is selected
@@ -34,8 +34,24 @@ const SettingsSection: React.FC = () => {
 
     return (
         <div className="bg-gray-800/50 p-3 rounded-lg border border-gray-700 space-y-3">
-            {/* Text Model */}
+            {/* Generate Narrative Toggle */}
             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span className="font-semibold uppercase tracking-wide">{t.generateNarrative}</span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        className="sr-only peer"
+                        checked={generateNarrative}
+                        onChange={(e) => appStore.update(s => ({...s, generateNarrative: e.target.checked}))}
+                    />
+                    <div className="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-450"></div>
+                </label>
+            </div>
+
+            {/* Text Model */}
+            <div className="flex items-center justify-between border-t border-gray-700 pt-3">
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                     <span className="font-semibold uppercase tracking-wide">{t.textModel}</span>
                 </div>
@@ -44,14 +60,15 @@ const SettingsSection: React.FC = () => {
                     onChange={(e) => appStore.update(s => ({...s, descriptionModel: e.target.value}))}
                     className="bg-gray-800 text-xs text-gray-300 border border-gray-600 rounded px-2 py-1 outline-none focus:border-amber-450 cursor-pointer w-40"
                 >
-                    <option value="gemini-3-pro-preview">Gemini 3 Pro</option>
-                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                    <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
+                    <option value="gemini-3-flash-preview">Gemini 3 Flash</option>
+                    <option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite</option>
                     <option value="skip">{t.modelDirect}</option>
                 </select>
             </div>
 
             {/* Image Model */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between border-t border-gray-700 pt-3">
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                     <span className="font-semibold uppercase tracking-wide">{t.imageModel}</span>
                 </div>
@@ -61,7 +78,7 @@ const SettingsSection: React.FC = () => {
                     className="bg-gray-800 text-xs text-gray-300 border border-gray-600 rounded px-2 py-1 outline-none focus:border-amber-450 cursor-pointer w-40"
                 >
                         <option value="gemini-2.5-flash-image">Gemini 2.5 Flash</option>
-                        <option value="gemini-3-pro-image-preview">Gemini 3 Pro Image {t.requiresKey}</option>
+                        <option value="gemini-3.1-flash-image-preview">Gemini 3.1 Flash Image {t.requiresKey}</option>
                 </select>
             </div>
 

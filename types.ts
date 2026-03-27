@@ -42,6 +42,7 @@ export interface MapData {
   // Current ephemeral text (used during gen)
   generatedDescription: string;
   narrativeDescription: string; 
+  generateNarrative: boolean;
 
   generatedImages: GeneratedAsset[];
   

@@ -18,6 +18,7 @@ export const TRANSLATIONS = {
     visualRequest: "Visual Description", // Unified
     description: "Description",
     listening: "Listening...",
+    generateNarrative: "Generate Narrative Description",
     
     textModel: "Text Model",
     imageModel: "Image Model",
@@ -123,6 +124,7 @@ export const TRANSLATIONS = {
     visualRequest: "Визуальное описание", // Unified
     description: "Описание",
     listening: "Слушаю...",
+    generateNarrative: "Генерировать худ. описание",
     
     textModel: "Текст. модель",
     imageModel: "Граф. модель",

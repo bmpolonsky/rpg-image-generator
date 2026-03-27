@@ -74,7 +74,16 @@ export class AIController {
         contents: { parts },
       });
 
-      return response.text || "Failed to generate description.";
+      if (!response.text) {
+        const finishReason = response.candidates?.[0]?.finishReason;
+        if (finishReason === 'SAFETY') {
+          throw new Error("Generation blocked by safety settings. Please modify your request.");
+        }
+        console.error("Empty response from model. Full response:", JSON.stringify(response));
+        throw new Error("Model returned an empty response.");
+      }
+
+      return response.text;
     } catch (error: any) {
       console.error("Error generating description:", error);
       throw new Error(error.message || "Unknown error");
@@ -113,8 +122,8 @@ export class AIController {
       `;
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: { text: prompt },
+        model: "gemini-3-flash-preview",
+        contents: prompt,
       });
 
       return response.text || "";
