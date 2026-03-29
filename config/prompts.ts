@@ -17,6 +17,7 @@ export const STYLES: Record<string, string> = {
   sketch: "Hand-drawn Graphite Pencil Sketch on textured paper. loose lines, shading with hatching, rough concept art feel. Monochrome (graphite gray). Looks like an adventurer's field journal entry.",
   noir: "Film Noir / Sin City aesthetic. High contrast black and white with occasional splashes of color (red/blue). Deep shadows, dramatic lighting, rain-slicked streets, moody atmosphere. Comic book ink style.",
   claymation: "Stop-motion Claymation / Aardman Animation style. Physical textures (fingerprints on clay), soft studio lighting, rounded shapes, depth of field looking like a miniature set. Whimsical and tactile.",
+  concept: "Rough Digital Concept Art style. Semi-realistic dark fantasy production illustration. Clear shape language, strong silhouettes. Loose digital painting with visible rough brushwork, mixed edges, and painterly textures. Restrained earthy palette with localized vivid accents. Matte finish, not overpolished. NOT photorealistic, NOT a 3D render.",
 };
 
 export const MODE_CONFIG = {
@@ -29,9 +30,9 @@ export const MODE_CONFIG = {
   },
   [GenerationMode.LOCATION]: {
     role: "Concept Artist and Environment Designer for Fantasy RPGs.",
-    viewpoint: "Cinematic Perspective. Rule of thirds. Eye-level or establishing shot. Depth of field.",
+    viewpoint: "Cinematic Perspective. Dynamic and natural composition. Eye-level or establishing shot. Depth of field.",
     sketchInterpretation: "The sketch is a composition guide. Lines indicate horizon, main structures, or foreground elements.",
-    negative: "Do NOT make it a top-down map.",
+    negative: "Do NOT make it a top-down map. Do NOT draw grid lines, UI elements, or literal composition guides.",
     focus: "Focus on atmosphere, lighting, scale, background details, and mood."
   },
   [GenerationMode.CHARACTER]: {

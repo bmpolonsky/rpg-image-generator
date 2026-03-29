@@ -4,6 +4,29 @@ import { AIController } from "./aiController";
 import { GeneratedAsset } from "../types";
 import { TRANSLATIONS } from "../translations";
 
+const isBase64Blank = async (base64: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return resolve(false);
+            ctx.drawImage(img, 0, 0);
+            const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i] !== 0 || data[i+1] !== 0 || data[i+2] !== 0) {
+                    return resolve(false);
+                }
+            }
+            resolve(true);
+        };
+        img.onerror = () => resolve(false);
+        img.src = base64;
+    });
+};
+
 class GenerationController {
   private abortController: AbortController | null = null;
   private timerInterval: number | null = null;
@@ -118,7 +141,9 @@ class GenerationController {
     }
 
     const signal = this.initAbortController();
-    const sketch = canvasState.currentBase64; // Get directly from canvas store
+    const rawSketch = canvasState.currentBase64;
+    const isBlank = rawSketch ? await isBase64Blank(rawSketch) : true;
+    const sketch = isBlank ? null : rawSketch;
     const isDirectMode = state.descriptionModel === 'skip';
 
     appStore.update(s => ({ 
@@ -239,7 +264,10 @@ class GenerationController {
 
   async generateVariations() {
       const state = appStore.getState();
-      const sketch = canvasStore.getState().currentBase64;
+      const canvasState = canvasStore.getState();
+      const rawSketch = canvasState.currentBase64;
+      const isBlank = rawSketch ? await isBase64Blank(rawSketch) : true;
+      const sketch = isBlank ? null : rawSketch;
 
       if (!state.generatedDescription) return;
       if (!(await this.ensureApiKey(state.imageModel))) return;

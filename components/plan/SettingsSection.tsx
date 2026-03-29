@@ -108,6 +108,7 @@ const SettingsSection: React.FC = () => {
                         <option value="blueprint">{t.styles.blueprint}</option>
                         <option value="noir">{t.styles.noir}</option>
                         <option value="claymation">{t.styles.claymation}</option>
+                        <option value="concept">{t.styles.concept}</option>
                 </select>
             </div>
 

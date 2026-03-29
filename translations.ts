@@ -59,7 +59,8 @@ export const TRANSLATIONS = {
       isometric: "Isometric",
       blueprint: "Blueprint",
       noir: "Noir",
-      claymation: "Clay"
+      claymation: "Clay",
+      concept: "Concept Art"
     },
     
     modelDirect: "Raw Input / Skip AI",
@@ -165,7 +166,8 @@ export const TRANSLATIONS = {
       isometric: "Изометрия",
       blueprint: "Чертёж",
       noir: "Нуар",
-      claymation: "Пластилин"
+      claymation: "Пластилин",
+      concept: "Концепт-арт"
     },
 
     modelDirect: "Без обработки (сырой ввод)",

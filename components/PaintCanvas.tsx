@@ -61,6 +61,9 @@ const PaintCanvas: React.FC = () => {
 
       if (historyStep >= 0 && history[historyStep]) {
           ctx.putImageData(history[historyStep], 0, 0);
+          const base64 = canvas.toDataURL('image/png');
+          appStore.update(as => ({ ...as, sketchBase64: base64 }));
+          canvasStore.update(s => ({ ...s, currentBase64: base64 }));
       } else if (historyStep === -1) {
           // If fresh but we have a base64 from persistence
           if (currentBase64) {
