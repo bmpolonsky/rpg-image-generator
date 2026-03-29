@@ -10,6 +10,7 @@ export interface AppState {
   
   generatedDescription: string;
   narrativeDescription: string; 
+  generateNarrative: boolean;
   generatedImages: GeneratedAsset[];
   
   mode: GenerationMode;

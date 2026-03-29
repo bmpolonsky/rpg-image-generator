@@ -152,7 +152,7 @@ class GenerationController {
         lastTextDuration: undefined,
         lastImageDuration: undefined,
         isGeneratingDescription: true, 
-        isGeneratingNarrative: true, 
+        isGeneratingNarrative: state.generateNarrative, 
         error: null,
     }));
     this.startTimer();
@@ -163,7 +163,6 @@ class GenerationController {
     // Start narrative generation but don't await it yet for UI flow
     let narrativePromise = Promise.resolve("");
     if (state.generateNarrative) {
-        appStore.update(s => ({ ...s, isGeneratingNarrative: true }));
         narrativePromise = AIController.generateNarrativeText(state.loreFiles, state.locationRequest, state.mode, state.language)
             .then(text => {
                 if (signal.aborted) return "";
@@ -174,6 +173,8 @@ class GenerationController {
                 }));
                 return text;
             });
+    } else {
+        appStore.update(s => ({ ...s, narrativeDescription: "" }));
     }
 
     try {
@@ -294,7 +295,7 @@ class GenerationController {
                   
                   const newAsset: GeneratedAsset = {
                       imageUrl: imgUrl,
-                      narrative: state.narrativeDescription,
+                      narrative: state.generateNarrative ? state.narrativeDescription : "",
                       visualPrompt: state.generatedDescription
                   };
                   appStore.update(s => ({

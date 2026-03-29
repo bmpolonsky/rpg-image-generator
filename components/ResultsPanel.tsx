@@ -142,7 +142,7 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ onDeleteRequest, onDeleteAl
         generationController.editImage(editPrompt);
     };
 
-    const displayedNarrative = currentAsset?.narrative || narrativeDescription;
+    const displayedNarrative = currentAsset ? currentAsset.narrative : narrativeDescription;
 
     return (
      <div className="w-full h-full flex flex-col lg:flex-row gap-4">
